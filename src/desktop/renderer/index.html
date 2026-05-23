@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSeek Agent Runtime</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="desktop">
+      <aside class="left-panel">
+        <div class="brand">
+          <div class="mark">DS</div>
+          <div>
+            <h1>DeepSeek Runtime</h1>
+            <p>&#x684c;&#x9762;&#x4e3b;&#x63a7;&#x53f0;</p>
+          </div>
+        </div>
+
+        <section id="settingsSection" class="settings-screen hidden" role="dialog" aria-modal="true" aria-label="&#x8bbe;&#x7f6e;&#x4e2d;&#x5fc3;">
+          <div class="settings-window">
+            <div class="settings-screen-head">
+              <div>
+                <h2>&#x8bbe;&#x7f6e;&#x4e2d;&#x5fc3;</h2>
+                <p>&#x6a21;&#x578b;&#x3001;API&#x3001;&#x6743;&#x9650;&#x548c;&#x4e0a;&#x4e0b;&#x6587;&#x7b56;&#x7565;</p>
+              </div>
+              <button id="settingsCloseBtn" class="icon-btn" title="&#x5173;&#x95ed;&#x8bbe;&#x7f6e;">&#x00d7;</button>
+            </div>
+          <label class="field">
+            <span>&#x4f1a;&#x8bdd; API Key</span>
+            <input id="apiKey" type="password" autocomplete="off" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>API Base URL</span>
+            <input id="apiBaseURL" placeholder="https://api.deepseek.com" spellcheck="false" />
+          </label>
+          <div class="settings-actions">
+            <button id="settingsSaveInModalBtn" class="primary">&#x4fdd;&#x5b58;&#x8bbe;&#x7f6e;</button>
+            <button id="clearKeyBtn" class="secondary">&#x6e05;&#x9664; Key</button>
+          </div>
+          <div id="settingsStatus" class="settings-status">&#x8bbe;&#x7f6e;&#x5c06;&#x4fdd;&#x5b58;&#x5230;&#x672c;&#x673a;&#x7528;&#x6237;&#x76ee;&#x5f55;&#x3002;</div>
+          </div>
+        </section>
+
+        <section class="section history-section">
+          <div class="section-title">
+            <h2>&#x5386;&#x53f2;&#x5bf9;&#x8bdd;</h2>
+            <button id="clearHistoryBtn" class="mini-btn">&#x6e05;&#x7a7a;</button>
+          </div>
+          <div id="conversationHistory" class="conversation-history">&#x5c1a;&#x65e0;&#x5386;&#x53f2;&#x5bf9;&#x8bdd;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>Skills</h2>
+            <div class="section-actions">
+              <button id="toggleSkillsBtn" class="mini-btn">&#x6536;&#x8d77;</button>
+              <button id="refreshSkillsBtn" class="mini-btn">&#x5237;&#x65b0;</button>
+            </div>
+          </div>
+          <div id="skillsBody">
+            <label class="field compact-field">
+              <span>&#x641c;&#x7d22; Skill</span>
+              <input id="skillSearch" placeholder="code / deepseek / ui" spellcheck="false" />
+            </label>
+            <div id="skillsList" class="skills-list">&#x5c1a;&#x672a;&#x52a0;&#x8f7d; Skill&#x3002;</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>CLI &#x80fd;&#x529b;&#x5df2;&#x79fb;&#x690d;</h2>
+          <div id="capabilityList" class="capability-list"></div>
+        </section>
+      </aside>
+
+      <section class="main-panel">
+        <header class="topbar">
+          <div>
+            <h2>&#x667a;&#x80fd;&#x4f53;&#x4f1a;&#x8bdd;</h2>
+            <p id="routeSummary">&#x5c1a;&#x672a;&#x9009;&#x62e9;&#x8def;&#x7531;</p>
+          </div>
+          <div class="top-actions">
+            <button id="newConversationBtn" class="secondary">&#x65b0;&#x5efa;&#x5bf9;&#x8bdd;</button>
+            <button id="settingsEntryBtn" class="icon-btn settings-entry" title="&#x8bbe;&#x7f6e;">&#9881;</button>
+            <div id="costPill" class="cost-pill">&#x5c1a;&#x65e0;&#x6210;&#x672c;&#x6570;&#x636e;</div>
+          </div>
+        </header>
+
+        <section class="metrics">
+          <div><span>&#x6a21;&#x578b;</span><strong id="metricModel">-</strong></div>
+          <div><span>Thinking</span><strong id="metricThinking">-</strong></div>
+          <div><span>&#x5f53;&#x6b21;&#x547d;&#x4e2d;</span><strong id="metricRequestCache">-</strong></div>
+          <div><span>&#x4f1a;&#x8bdd;&#x547d;&#x4e2d;</span><strong id="metricConversationCache">-</strong></div>
+        </section>
+
+        <section class="transcript">
+          <div id="output" class="message-list">
+            <article class="message system">
+              <div class="message-role">&#x7cfb;&#x7edf;</div>
+              <pre>&#x5c31;&#x7eea;&#x3002;&#x56de;&#x8f66;&#x53d1;&#x9001;&#xff0c;Shift+Enter &#x6362;&#x884c;&#x3002;</pre>
+            </article>
+          </div>
+        </section>
+
+        <section class="composer">
+          <div class="composer-main">
+            <div class="composer-workspace">
+              <label class="compact-control workspace-control">
+                <span>&#x5de5;&#x4f5c;&#x533a;</span>
+                <input id="cwd" spellcheck="false" />
+              </label>
+              <button id="chooseWorkspaceBtn" class="mini-icon-btn" title="&#x9009;&#x62e9;&#x5de5;&#x4f5c;&#x533a;">...</button>
+              <select id="workspaceSelect" class="workspace-select" title="&#x9009;&#x62e9;&#x5386;&#x53f2;&#x5de5;&#x4f5c;&#x533a;" aria-label="&#x9009;&#x62e9;&#x5386;&#x53f2;&#x5de5;&#x4f5c;&#x533a;">
+                <option value="">&#x5386;&#x53f2;&#x5de5;&#x4f5c;&#x533a;</option>
+              </select>
+              <span id="conversationWorkspace" class="workspace-hint">&#x5f53;&#x524d;&#x5bf9;&#x8bdd;&#x81ea;&#x52a8;&#x4fdd;&#x5b58;</span>
+            </div>
+            <div class="composer-control-strip" aria-label="&#x8fd0;&#x884c;&#x53c2;&#x6570;">
+              <label class="compact-control model-control">
+                <span>&#x6a21;&#x578b;</span>
+                <select id="modelSelect"></select>
+              </label>
+              <button id="syncModelsBtn" class="mini-icon-btn" title="&#x4ece; API &#x540c;&#x6b65;&#x6a21;&#x578b;">&#x21bb;</button>
+              <label class="compact-control">
+                <span>Thinking</span>
+                <select id="thinkingMode">
+                  <option value="auto">&#x81ea;&#x52a8;</option>
+                  <option value="enabled">&#x5f00;&#x542f;</option>
+                  <option value="disabled">&#x5173;&#x95ed;</option>
+                </select>
+              </label>
+              <label class="compact-control turns-control">
+                <span>&#x8f6e;&#x6b21;</span>
+                <select id="maxTurns">
+                  <option value="auto">&#x81ea;&#x52a8;</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                </select>
+              </label>
+              <label class="compact-control">
+                <span>&#x8054;&#x7f51;</span>
+                <select id="networkEnabled">
+                  <option value="true">&#x5f00;&#x542f;</option>
+                  <option value="false">&#x5173;&#x95ed;</option>
+                </select>
+              </label>
+              <label class="compact-control">
+                <span>&#x538b;&#x7f29;</span>
+                <select id="autoCompressContext">
+                  <option value="true">&#x81ea;&#x52a8;</option>
+                  <option value="false">&#x5173;&#x95ed;</option>
+                </select>
+              </label>
+              <label class="compact-control permission-control">
+                <span>&#x6743;&#x9650;</span>
+                <select id="permissionMode">
+                  <option value="ask">&#x9700;&#x786e;&#x8ba4;</option>
+                  <option value="allow">&#x81ea;&#x52a8;&#x5141;&#x8bb8;</option>
+                  <option value="full_access">&#x5b8c;&#x6574;&#x6743;&#x9650;</option>
+                  <option value="deny">&#x7981;&#x6b62;&#x5199;&#x5165;</option>
+                </select>
+              </label>
+              <button id="saveSettingsBtn" class="mini-save-btn" title="&#x4fdd;&#x5b58;&#x8fd0;&#x884c;&#x53c2;&#x6570;">&#x4fdd;&#x5b58;</button>
+            </div>
+            <div id="attachedFiles" class="attached-files"></div>
+            <textarea id="task" spellcheck="false">&#x5206;&#x6790;&#x5f53;&#x524d;&#x9879;&#x76ee;&#xff0c;&#x4f18;&#x5316;&#x684c;&#x9762;&#x7aef;&#x529f;&#x80fd;&#x3001;Token &#x6d88;&#x8017;&#x548c;&#x7f13;&#x5b58;&#x547d;&#x4e2d;&#x7387;&#x3002;</textarea>
+          </div>
+          <div class="composer-actions">
+            <button id="attachFileBtn" class="secondary">&#x9644;&#x52a0;&#x6587;&#x4ef6;</button>
+            <button id="previewBtn" class="secondary">&#x9884;&#x89c8;&#x4e0a;&#x4e0b;&#x6587;</button>
+            <button id="stopBtn" class="secondary stop-btn" hidden disabled>&#x4e2d;&#x65ad;</button>
+            <button id="runBtn" class="primary">&#x8fd0;&#x884c;</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-panel">
+        <section class="section progress-card">
+          <div class="section-title">
+            <h2>&#x5b8c;&#x6210;&#x8fdb;&#x5ea6;</h2>
+            <span id="statusText">&#x5c31;&#x7eea;</span>
+          </div>
+          <div id="taskGoalCard" class="task-goal-card idle">
+            <div class="task-goal-head">
+              <span>&#x4efb;&#x52a1;&#x76ee;&#x6807;</span>
+              <strong id="taskCompletionStatus">&#x5f85;&#x786e;&#x8ba4;</strong>
+            </div>
+            <p id="taskGoalText">&#x5c1a;&#x672a;&#x8fd0;&#x884c;&#x4efb;&#x52a1;&#x3002;</p>
+            <div class="task-goal-meta">
+              <span id="taskGoalStage">&#x72b6;&#x6001;&#xff1a;&#x5f85;&#x673a;</span>
+              <span id="taskGoalEvidence">&#x5b8c;&#x6210;&#x4f9d;&#x636e;&#xff1a;-</span>
+            </div>
+          </div>
+          <div class="progress-shell"><div id="progressBar" class="progress-bar"></div></div>
+          <div id="progressList" class="progress-list"></div>
+        </section>
+
+        <section class="section">
+          <h2>&#x6267;&#x884c;&#x8f68;&#x8ff9; / &#x4e2d;&#x95f4;&#x601d;&#x8003;</h2>
+          <div id="reasoningPanel" class="reasoning">&#x5c1a;&#x65e0;&#x601d;&#x8003;&#x5185;&#x5bb9;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <h2>&#x5b8c;&#x6210;&#x6587;&#x4ef6;</h2>
+          <div id="completedFiles" class="file-list">&#x5c1a;&#x65e0;&#x6587;&#x4ef6;&#x53d8;&#x66f4;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <h2>Skill &#x9884;&#x89c8;</h2>
+          <div id="skillPreview" class="skill-preview">&#x4ece;&#x5de6;&#x4fa7;&#x9009;&#x62e9;&#x4e00;&#x4e2a; Skill &#x67e5;&#x770b;&#x61d2;&#x52a0;&#x8f7d;&#x5185;&#x5bb9;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <h2>&#x5bf9;&#x8bdd;&#x6210;&#x957f;</h2>
+          <div id="learningPanel" class="learning-panel">&#x5c1a;&#x65e0;&#x4f1a;&#x8bdd;&#x6458;&#x8981;&#x6216;&#x7ea0;&#x9519;&#x4fe1;&#x53f7;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <h2>Token / &#x7f13;&#x5b58;</h2>
+          <div id="budgetDetails" class="budget-grid"></div>
+          <div id="cacheRates" class="cache-rates"></div>
+          <ul id="cacheRecommendations" class="notes"></ul>
+        </section>
+
+        <section class="section">
+          <h2>&#x4e0a;&#x4e0b;&#x6587;</h2>
+          <div id="contextItems" class="context-list">&#x5c1a;&#x65e0;&#x6761;&#x76ee;&#x3002;</div>
+        </section>
+
+        <section class="section">
+          <h2>&#x5de5;&#x5177;&#x7ed3;&#x679c;</h2>
+          <div id="toolResults" class="tool-list">&#x5c1a;&#x65e0;&#x5de5;&#x5177;&#x8c03;&#x7528;&#x3002;</div>
+        </section>
+      </aside>
+    </main>
+    <section id="permissionModal" class="permission-modal hidden" role="dialog" aria-modal="true" aria-labelledby="permissionTitle">
+      <div class="permission-dialog">
+        <div class="permission-dialog-head">
+          <div>
+            <h2 id="permissionTitle">&#x6743;&#x9650;&#x8bf7;&#x6c42;</h2>
+            <p>&#x68c0;&#x6d4b;&#x5230;&#x64cd;&#x4f5c;&#x6027;&#x5de5;&#x5177;&#x8c03;&#x7528;&#xff0c;&#x9700;&#x8981;&#x4f60;&#x786e;&#x8ba4;&#x540e;&#x624d;&#x4f1a;&#x7ee7;&#x7eed;&#x6267;&#x884c;&#x3002;</p>
+          </div>
+          <span id="permissionState">&#x5f85;&#x786e;&#x8ba4;</span>
+        </div>
+        <pre id="permissionPrompt" class="permission-prompt"></pre>
+        <div class="permission-actions">
+          <button id="permissionDenyBtn" class="secondary">&#x62d2;&#x7edd;</button>
+          <button id="permissionApproveBtn" class="danger">&#x5141;&#x8bb8;&#x6267;&#x884c;</button>
+        </div>
+      </div>
+    </section>
+    <script src="./app.js"></script>
+  </body>
+</html>

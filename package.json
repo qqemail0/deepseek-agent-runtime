@@ -1,0 +1,49 @@
+{
+  "name": "deepseek-agent-runtime",
+  "version": "0.1.0",
+  "description": "DeepSeek-first local AI agent runtime with low-token context selection, tool calls, skills, permissions, and cache-aware cost reporting.",
+  "type": "module",
+  "homepage": "https://github.com/qqemail0/deepseek-agent-runtime#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qqemail0/deepseek-agent-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qqemail0/deepseek-agent-runtime/issues"
+  },
+  "bin": {
+    "ds-agent": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli/index.ts",
+    "build": "tsc -p tsconfig.json && npm run desktop:assets",
+    "desktop": "npm run build && electron dist/desktop/main.js",
+    "desktop:assets": "node scripts/copy-desktop-assets.mjs",
+    "start": "node dist/cli/index.js",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "agent",
+    "deepseek",
+    "cli",
+    "tools",
+    "skills",
+    "electron",
+    "token-optimization",
+    "prompt-caching"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^14.0.2",
+    "openai": "^6.9.1",
+    "pino": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "electron": "^39.8.10",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
+  }
+}

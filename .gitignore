@@ -1,0 +1,27 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.agent/session.sqlite
+.agent/usage.jsonl
+.agent/sessions/
+.agent/run-logs/
+*.log
+
+# Local scratch files created during manual testing.
+-p/
+github-clone/
+about-me.html
+gen.js
+intro.html
+personal-intro.html
+personal-intro.html.bak
+test.html
+write-html.js
+
+# OS and editor noise.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,5 +1,7 @@
 # DeepSeek Agent Runtime
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 DeepSeek Agent Runtime is an alpha local AI agent harness for coding and
 project work. It provides a desktop-first workflow, a CLI, tool calls, skills,
 permission checks, context compression, model routing, and DeepSeek cache/cost
